@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 	title: "CIUNAC SOL",
-	description: "App para ingreso y consulta de solicitudes de CIUNAC",
+	description: "App para ingreso y consulta de solicitudes de CIUNAC, solicitud de certificados, constancias, becas y exámenes de ubicación",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
