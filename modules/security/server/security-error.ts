@@ -1,0 +1,29 @@
+export type SecurityErrorCode =
+  | 'INVALID_REQUEST'
+  | 'INVALID_FILE'
+  | 'INVALID_ORIGIN'
+  | 'CAPTCHA_FAILED'
+  | 'VERIFICATION_FAILED'
+  | 'OTP_EXPIRED'
+  | 'OTP_REUSED'
+  | 'MAX_ATTEMPTS'
+  | 'RESEND_TOO_SOON'
+  | 'RATE_LIMITED'
+  | 'PRICE_CHANGED'
+  | 'DUPLICATE_REQUEST'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'UPSTREAM_ERROR'
+  | 'SERVICE_UNAVAILABLE';
+
+/** Codigo/status controlados para rutas API; message es tecnico y no se devuelve al usuario. */
+export class SecurityError extends Error {
+  constructor(
+    readonly code: SecurityErrorCode,
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'SecurityError';
+  }
+}
