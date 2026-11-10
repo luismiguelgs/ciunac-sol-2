@@ -84,6 +84,18 @@ export function clearOtpChallenge(response: NextResponse): void {
   clearCookie(response, challengeCookie);
 }
 
+/** Mutable cookie access for Auth.js Credentials inside a Route Handler. */
+export async function readServerOtpChallenge(): Promise<OtpChallenge | null> {
+  return readServerCookie(challengeCookie);
+}
+
+export async function saveServerOtpChallenge(challenge: OtpChallenge | null): Promise<void> {
+  const store = await cookies();
+  store.set(challengeCookie.name,
+    challenge ? encryptToken(challenge, getOtpSessionSecret()) : '',
+    cookieOptions(challenge ? CHALLENGE_COOKIE_MS : 0));
+}
+
 /** Lee correo verificado desde un Route Handler; rechaza cookie invalida, vencida o proposito distinto. */
 export function readVerifiedSessionFromRequest(
   request: NextRequest,

@@ -36,7 +36,7 @@ function DatePickerDayButton(props: ComponentProps<typeof CalendarDayButton>) {
 
   // CalendarDayButton forwards props but does not attach its own focus ref.
   const buttonProps = { ...props, ref }
-  return <CalendarDayButton {...buttonProps} locale={es} />
+  return <CalendarDayButton {...buttonProps} className={cn('text-sm', props.className)} locale={es} />
 }
 
 export function DatePicker<T extends FieldValues>({
@@ -54,7 +54,7 @@ export function DatePicker<T extends FieldValues>({
   const describedBy = [description && `${id}-description`, fieldState.error && `${id}-error`].filter(Boolean).join(' ') || undefined
 
   return (
-    <Field data-invalid={fieldState.invalid} data-disabled={field.disabled} className="mt-2 min-h-[70px]">
+    <Field data-invalid={fieldState.invalid} data-disabled={field.disabled} className="min-h-[70px]">
       <FieldLabel id={`${id}-label`} htmlFor={id}>{label}</FieldLabel>
       <Popover
         open={open && !field.disabled}
@@ -78,8 +78,8 @@ export function DatePicker<T extends FieldValues>({
           <CalendarIcon aria-hidden="true" className="mr-2 h-4 w-4" />
           <span id={`${id}-value`}>{selectedDate ? format(selectedDate, 'dd/MM/yyyy') : 'Seleccionar fecha'}</span>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" aria-labelledby={`${id}-label`}>
-          <div className="flex justify-between gap-2 p-2">
+        <PopoverContent align="start" className="w-72 max-w-[calc(100vw-2rem)] gap-0 p-0" aria-labelledby={`${id}-label`}>
+          <div className="grid grid-cols-2 gap-2 px-3 pt-3">
             <Select<string>
               items={monthItems}
               value={months[getMonth(currentMonth)]}
@@ -87,12 +87,10 @@ export function DatePicker<T extends FieldValues>({
                 if (month == null) return
                 const monthIndex = months.indexOf(month)
                 if (monthIndex < 0) return
-                const nextDate = setMonth(selectedDate ?? currentMonth, monthIndex)
-                setCurrentMonth(nextDate)
-                field.onChange(nextDate)
+                setCurrentMonth(setMonth(currentMonth, monthIndex))
               }}
             >
-              <SelectTrigger aria-label="Mes" className="w-[110px]"><SelectValue placeholder="Mes" /></SelectTrigger>
+              <SelectTrigger aria-label="Mes" className="w-full"><SelectValue placeholder="Mes" /></SelectTrigger>
               <SelectContent>
                 {months.map((month) => <SelectItem key={month} value={month}>{month}</SelectItem>)}
               </SelectContent>
@@ -102,27 +100,30 @@ export function DatePicker<T extends FieldValues>({
               value={String(getYear(currentMonth))}
               onValueChange={(year) => {
                 if (year == null || !years.includes(year)) return
-                const nextDate = setYear(selectedDate ?? currentMonth, Number(year))
-                setCurrentMonth(nextDate)
-                field.onChange(nextDate)
+                setCurrentMonth(setYear(currentMonth, Number(year)))
               }}
             >
-              <SelectTrigger aria-label="Año" className="w-[110px]"><SelectValue placeholder="Año" /></SelectTrigger>
+              <SelectTrigger aria-label="Año" className="w-full"><SelectValue placeholder="Año" /></SelectTrigger>
               <SelectContent>
                 {years.map((year) => <SelectItem key={year} value={year}>{year}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <Calendar
+            className="w-full [--cell-size:2.25rem]"
+            classNames={{ root: 'w-full' }}
             components={{ DayButton: DatePickerDayButton }}
             mode="single"
             selected={selectedDate}
             onSelect={(date) => {
               if (date) setCurrentMonth(date)
               field.onChange(date ?? null)
+              if (date) setOpen(false)
             }}
             month={currentMonth}
             onMonthChange={setCurrentMonth}
+            startMonth={new Date(startYear, 0)}
+            endMonth={new Date(endYear, 11)}
             autoFocus
             locale={es}
           />

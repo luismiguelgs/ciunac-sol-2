@@ -1,0 +1,152 @@
+{
+  "date": "2026-11-06",
+  "timezone": "America/Lima",
+  "codeRevision": "605e1ebc2c5c96165139bba2bb8fde67db75c9a4 plus local work",
+  "documentationRevision": "pendiente de versionar",
+  "scope": [
+    "HU-AN-005",
+    "RF-AN-012",
+    "RF-AN-017",
+    "CA-AN-016..019",
+    "CA-AN-030..035",
+    "TASK-AN-010",
+    "TASK-AN-016",
+    "TASK-AN-017"
+  ],
+  "providerContract": {
+    "method": "authorized read-only OpenAPI; no student data read or writes",
+    "version": "1.4.7"
+  },
+  "checks": [
+    {
+      "files": 4,
+      "tests": 62,
+      "command": "pnpm test",
+      "result": "passed"
+    },
+    {
+      "tests": 15,
+      "providers": "simulated OIDC, Q10, CIUNAC, CAPTCHA and Drive; no real writes",
+      "command": "pnpm exec playwright test",
+      "result": "passed"
+    },
+    {
+      "mode": "isolated Webpack production build with mock fonts; final standalone E2E suite passed",
+      "command": "pnpm test:e2e (build phase)",
+      "result": "passed"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec tsc --noEmit"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec eslint (implementation, routes and tests)"
+    },
+    {
+      "limitation": "existing findings in consulta-form, program-select and proxy-validation not modified by this delivery",
+      "errors": 6,
+      "command": "pnpm exec eslint . --format json --output-file .next-e2e/lint-classification.json",
+      "warnings": 3,
+      "result": "failed"
+    },
+    {
+      "result": "passed",
+      "command": "OpenAPI YAML, refs and operation IDs",
+      "version": "0.3.0",
+      "refs": 179,
+      "paths": 22,
+      "operations": 23
+    },
+    {
+      "width": 390,
+      "files": [
+        ".next-e2e/academic-step-mobile.png",
+        ".next-e2e/document-step-mobile.png"
+      ],
+      "command": "mobile screenshots inspected",
+      "result": "passed"
+    },
+    {
+      "result": "passed",
+      "command": "git diff --check"
+    }
+  ],
+  "limitations": [
+    "User explicitly accepts current public-by-link Drive policy; disclosure displayed before upload",
+    "Abandoned/replaced uploads may remain unassociated; no automatic deletion available in this scope",
+    "Cookie receipts and UI guards do not provide distributed idempotency or durable crash recovery; GAP-SEG-002 remains",
+    "Real upload/persistence and SMTP not tested; no database/backend changes, no deployment",
+    "Only new registrations; existing student authorization/update and Microsoft remain out of scope"
+  ],
+  "sources": [
+    {
+      "sha256": "ccf49e9dda76024f5f3360929598c69392093de6c4b1b14cbec6f774d8f2efcd",
+      "path": "modules/solicitud-nuevo/academic.ts"
+    },
+    {
+      "sha256": "3a10da8f56e6b33ca3453e204d71007b8685f05589c91e79687a5bdd39aaa04c",
+      "path": "modules/solicitud-nuevo/model.ts"
+    },
+    {
+      "sha256": "25e20e3fb8410361fa8ab0d5216f4646ea8fe93a2cce21f650aecd9fef5dfa69",
+      "path": "modules/solicitud-nuevo/schemas.ts"
+    },
+    {
+      "sha256": "5ec7c0fb6c046b43f58e46a6f6e691a81d0a3a47b01fc3559b5799989b547101",
+      "path": "modules/solicitud-nuevo/store.ts"
+    },
+    {
+      "sha256": "5c1eee71563e233dcaa7724a8bc9cdb942e381e5570c45cc70c7e3896e2120d3",
+      "path": "modules/solicitud-nuevo/operations.ts"
+    },
+    {
+      "sha256": "28b2c74caba245e90e8516755c4f02d1ee9b2d0020bc5ad86e840620b8ef60d9",
+      "path": "modules/solicitud-nuevo/components/academic-data.tsx"
+    },
+    {
+      "sha256": "6fac26e8e23689b988da7f74c4cd9da556604ada79667a38a1d00f59484ecfb2",
+      "path": "modules/solicitud-nuevo/components/identity-document.tsx"
+    },
+    {
+      "sha256": "abd95523acf71163b939aa9aa1b479be492ee7e159ac681d47301335fc13e8a1",
+      "path": "modules/solicitud-nuevo/components/new-student-process.tsx"
+    },
+    {
+      "sha256": "12b71e6e1bf06c037b597689892d0e12795b92e5bc9734cbdaeef4975f8da8be",
+      "path": "modules/solicitud-nuevo/components/use-register-new-student.ts"
+    },
+    {
+      "sha256": "1428b61d4e502ac93d5c0c7f5e5e2ab471859873b9e7a4e2f32a11b1dfc4b51b",
+      "path": "modules/solicitud-nuevo/infrastructure/server/flow-session.ts"
+    },
+    {
+      "sha256": "90980517846ae02410b18b017797b95c393ae65714fd07c400711db1a91df9c2",
+      "path": "modules/solicitud-nuevo/infrastructure/server/registration.ts"
+    },
+    {
+      "sha256": "5395ebfbdf01c594463575f72061c0fdb1cb94d448446065a0dd84f83d945dec",
+      "path": "modules/solicitud-nuevo/infrastructure/server/new-student-request-validation.ts"
+    },
+    {
+      "sha256": "e254bc14a44963f62eefa1fe5367d16265c4e94fbe5c0061d0371c7283b59c59",
+      "path": "app/api/solicitud-nuevo/documento/route.ts"
+    },
+    {
+      "sha256": "6c26c5a652fc4eb8c25d14e733f1a45c760900d78b12d8996fcf822d7aff2be9",
+      "path": "app/api/solicitud-nuevo/codigo/route.ts"
+    },
+    {
+      "sha256": "d1b0a21c5c2b1af912c382e2ad4d8eca82412a2e23f988dbd0a363e6fbf52f73",
+      "path": "app/api/solicitud-nuevo/catalogos/route.ts"
+    },
+    {
+      "sha256": "e7055aa2e55f0a9a0f59bc4ecd064cabb32b6689d41ca14c35f41530fb5d77b3",
+      "path": "tests/new-student-registration.test.ts"
+    },
+    {
+      "sha256": "312c4868103d5326e78112dac41d359fedbd7ccb48c2920017202a7b082ba7ef",
+      "path": "tests/e2e/auth.spec.ts"
+    }
+  ]
+}

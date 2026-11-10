@@ -22,7 +22,7 @@ import {
 
 //import { validateCertificateRequest } from '@/modules/solicitud-certificado/server'
 //import { validateConstanciaRequest } from '@/modules/solicitud-constancia/server'
-//import { validateNewStudentRequest } from '@/modules/solicitud-nuevo/server'
+import { validateNewStudentRequest } from '@/modules/solicitud-nuevo/server'
 /*
 import {
   validateIdentityDocumentUpload,
@@ -95,7 +95,7 @@ export async function validateCiunacProxyBody(
     case 'scholarship.create':
       return //validateScholarshipRequest(value, session.email)
     case 'new-student.create':
-      return //validateNewStudentRequest(value, session)
+      return validateNewStudentRequest(value, session)
     default:
       throw new SecurityError('FORBIDDEN', 403, 'API operation does not accept a body')
   }

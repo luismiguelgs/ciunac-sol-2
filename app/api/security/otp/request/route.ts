@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyCaptchaToken } from '@/modules/security/server/captcha';
+import { ciunacRequest } from '@/modules/security/server/ciunac-client';
+import { getOtpSessionSecret } from '@/modules/security/server/environment';
+import {
+  createOtpChallenge,
+  OTP_EXPIRATION_SECONDS,
+  OTP_RESEND_DELAY_SECONDS,
+} from '@/modules/security/server/otp';
+import { assertTrustedOrigin, parseJsonBody } from '@/modules/security/server/request-security';
+import { handleSecurityRoute } from '@/modules/security/server/responses';
+import { otpRequestSchema } from '@/modules/security/server/schemas';
+import { readOtpChallenge, writeOtpChallenge } from '@/modules/security/server/session';
+
+export const runtime = 'nodejs';
+
+/** Verifica CAPTCHA, genera el OTP y envia correo; publica tiempos, nunca el codigo. */
+export async function POST(request: NextRequest) {
+  return handleSecurityRoute('security.otp.request.failed', async () => {
+    assertTrustedOrigin(request);
+    const input = await parseJsonBody(request, otpRequestSchema);
+    const remoteIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+    await verifyCaptchaToken(input.captchaToken, remoteIp);
+
+    const { challenge, code } = createOtpChallenge({
+      email: input.email,
+      purpose: input.purpose,
+      previous: readOtpChallenge(request),
+      secret: getOtpSessionSecret(),
+    });
+
+    await ciunacRequest('mailer', {
+      method: 'POST',
+      body: {
+        type: 'RANDOM',
+        email: challenge.email,
+        number: Number(code),
+      },
+    });
+
+    const response = NextResponse.json({
+      ok: true,
+      expiresInSeconds: OTP_EXPIRATION_SECONDS,
+      resendInSeconds: OTP_RESEND_DELAY_SECONDS,
+    }, { status: 202 });
+    // Solo instala el desafio si mailer acepto la peticion; no confirma entrega SMTP.
+    writeOtpChallenge(response, challenge);
+    return response;
+  });
+}

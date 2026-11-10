@@ -57,6 +57,15 @@ export function getOtpSessionSecret(): string {
   return secret;
 }
 
+/** Auth.js has an independent encryption secret; no fallback to legacy cookies. */
+export function getAuthSecret(): string {
+  const secret = requireValue('AUTH_SECRET');
+  if (Buffer.byteLength(secret, 'utf8') < MIN_SECRET_BYTES) {
+    throw new SecurityError('SERVICE_UNAVAILABLE', 503, 'Invalid AUTH_SECRET configuration');
+  }
+  return secret;
+}
+
 /** Obtiene esquema, host y puerto autorizados para comparar el Origin de las escrituras. */
 export function getAppOrigin(): string {
   return new URL(requireUrl('APP_BASE_URL')).origin;

@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-15",
+  "timezone": "America/Lima",
+  "codeRevision": "605e1ebc2c5c96165139bba2bb8fde67db75c9a4 plus local changes",
+  "documentationRevision": "pendiente de versionar",
+  "decision": "Google and email-otp available; Microsoft deferred by explicit user instruction",
+  "scope": [
+    "HU-AN-003 partial",
+    "RF-SEG-011 partial",
+    "RF-SEG-012 partial"
+  ],
+  "checks": [
+    {
+      "tests": 37,
+      "files": 3,
+      "result": "passed",
+      "command": "pnpm test"
+    },
+    {
+      "providers": "simulated Google, CAPTCHA, Q10, CIUNAC; Microsoft network blocked",
+      "build": "isolated Webpack production build",
+      "tests": 10,
+      "result": "passed",
+      "command": "pnpm test:e2e"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec tsc --noEmit"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec eslint (changed production files and tests)"
+    },
+    {
+      "providers": [
+        "google",
+        "email-otp"
+      ],
+      "contractVersion": "0.2.0",
+      "result": "passed",
+      "command": "YAML parse and provider enums"
+    },
+    {
+      "result": "passed",
+      "microsoftAvailable": false,
+      "emailOtpAvailable": true,
+      "command": "GET http://localhost:3000/api/auth/providers",
+      "limitation": "runtime provider availability only; not a successful Google login",
+      "googleAvailable": true
+    },
+    {
+      "result": "passed",
+      "command": "git diff --check"
+    }
+  ],
+  "limitations": [
+    "No real OAuth login or student/mail writes executed",
+    "Microsoft remains a future requirement, not removed from product objective",
+    "Existing global lint findings recorded in previous evidence are not fixed by this iteration",
+    "GAP-SEG-002 remains open"
+  ],
+  "sources": [
+    {
+      "path": "modules/security/server/auth-config.ts",
+      "sha256": "0e0d1dea93922723f93becf5afb4e0cf7d00a2b5550ce3a750d3699287326d5f"
+    },
+    {
+      "path": "modules/security/domain/new-student-auth.ts",
+      "sha256": "f024c298d4f0fc9114e64b7c8dc1aa199ee8456073361007d4e814e80807d4f5"
+    },
+    {
+      "path": "modules/solicitud-nuevo/components/verification.tsx",
+      "sha256": "e1eef034a59ac234e95c9bd10a84271e2464ddf4c461a51e021199adaa15f5f3"
+    },
+    {
+      "path": "modules/solicitud-nuevo/components/new-student-process.tsx",
+      "sha256": "33c49be82625b68dc3a2ab85a231843634feac2550d80f2bc5e0f06137214e63"
+    },
+    {
+      "path": "tests/auth-config.test.ts",
+      "sha256": "c672d05044717fe4be0f122e71b7e7ea357640dbe6388ff776938c16875e5445"
+    },
+    {
+      "path": "tests/new-student-auth.test.ts",
+      "sha256": "642f6933b2a0d198b517fe84d9a1e3fac9a42e0dc1ae78ff663df94f677cc8cb"
+    },
+    {
+      "path": "tests/e2e/auth.spec.ts",
+      "sha256": "13fa774126a982c6aed48c594dabf77367bafb0ba97894eef28f57f778fc6d9b"
+    },
+    {
+      "path": "tests/e2e/fixtures/network.mjs",
+      "sha256": "2be7bce158aa94ce9cc31211175f82deb020b620bd6517cdbed2030e52a8615c"
+    },
+    {
+      "path": "tests/e2e/fixtures/environment.mjs",
+      "sha256": "01596186c4d5a3992cd1b9337eaacfaecdb23922612882c18515bfb552bfa423"
+    }
+  ]
+}

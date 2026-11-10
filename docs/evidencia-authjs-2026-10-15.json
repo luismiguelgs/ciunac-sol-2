@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-15",
+  "timezone": "America/Lima",
+  "codeRevision": "605e1ebc2c5c96165139bba2bb8fde67db75c9a4",
+  "workingTree": "local changes, including pre-existing untracked student flow",
+  "documentationRevision": "pendiente de versionar",
+  "scope": [
+    "HU-AN-003",
+    "RF-SEG-011",
+    "RF-SEG-012"
+  ],
+  "criteria": [
+    "CA-AN-009",
+    "CA-AN-010",
+    "CA-AN-011",
+    "CA-SEG-011",
+    "CA-SEG-012"
+  ],
+  "checks": [
+    {
+      "command": "pnpm test",
+      "tests": 36,
+      "result": "passed",
+      "files": 3
+    },
+    {
+      "command": "pnpm exec playwright test",
+      "tests": 12,
+      "result": "passed",
+      "providers": "simulated OIDC, CAPTCHA, Q10 and CIUNAC; Edge"
+    },
+    {
+      "command": "pnpm test:build",
+      "mode": "isolated Webpack production build with fake fonts and external services",
+      "result": "passed"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec tsc --noEmit"
+    },
+    {
+      "result": "passed",
+      "command": "pnpm exec eslint (Auth.js implementation, routes, UI and tests)"
+    },
+    {
+      "files": [
+        "app/api/ciunac/proxy-validation.ts",
+        "modules/consultas/components/consulta-form.tsx",
+        "modules/solicitud-nuevo/components/program-select.tsx"
+      ],
+      "result": "failed",
+      "errors": 6,
+      "limitation": "existing files not edited by this authentication delivery",
+      "warnings": 3,
+      "command": "pnpm exec eslint . --format json --output-file .next-e2e/lint-final.json"
+    },
+    {
+      "command": "YAML parse, local ref and operationId validation",
+      "result": "passed",
+      "contracts": [
+        {
+          "operations": 19,
+          "name": "portal-observado.openapi.yaml",
+          "refs": 160,
+          "paths": 19
+        },
+        {
+          "operations": 8,
+          "name": "auth-alumno-nuevo.openapi.yaml",
+          "refs": 4,
+          "paths": 6
+        }
+      ]
+    },
+    {
+      "command": "pnpm test:e2e",
+      "result": "passed",
+      "build": "isolated Webpack production build",
+      "tests": 12
+    }
+  ],
+  "limitations": [
+    "OAuth real and external app configuration pending",
+    "No deployment, database changes or real student/mail writes",
+    "GAP-SEG-002 remains open",
+    "Existing Q10 registration does not prove coordinated CIUNAC/Q10 persistence"
+  ],
+  "sources": [
+    {
+      "path": "auth.ts",
+      "sha256": "cebf5fd83aa64ce3a9a87323570c3263499ec930cb3f04e702c6f89764eaac7f"
+    },
+    {
+      "path": "modules/security/server/auth-config.ts",
+      "sha256": "a97fbacc0078ad067bf93583bfbedd261a4e412b147041e8a1b702f253b7304a"
+    },
+    {
+      "path": "modules/security/domain/new-student-auth.ts",
+      "sha256": "95ebee9957bd5f75a8bdfe791b980ad7f269c99be6deaf779dc6f5d370d7494c"
+    },
+    {
+      "path": "modules/security/server/new-student-session.ts",
+      "sha256": "a71c435eaa926df03ceec3fb1f84f8024d019f930625184b7cd2676186357d8e"
+    },
+    {
+      "path": "modules/security/server/verify-email-otp.ts",
+      "sha256": "a470d6c8960e2841ab78783f1acbe6f0df02feb0c091c5ec210f695d56cfd2d9"
+    },
+    {
+      "path": "app/api/security/otp/verify/route.ts",
+      "sha256": "5fc1ccf0caee4329a2101bdd2de95b3311eb554faafe81e9c688fe572b205254"
+    },
+    {
+      "path": "app/api/ciunac/[...path]/route.ts",
+      "sha256": "72723aa0899012db393de2f12d328c59aa0f09c14feda7a2009fabd632e7791f"
+    },
+    {
+      "path": "app/api/security/notifications/route.ts",
+      "sha256": "487fb75332aa0532be605d9352687ce93a91fe3283f231869151cd1f33e3470b"
+    },
+    {
+      "path": "app/solicitud-nuevo/page.tsx",
+      "sha256": "997f01dae5f65b74eb6e4bc3112916cbf94eabdf523a04f74392518648e1fce5"
+    },
+    {
+      "path": "modules/solicitud-nuevo/components/new-student-process.tsx",
+      "sha256": "06d7eeff8f63f87a1ab4115ce6c46ddf39a624dd0daffc47bcf782d0a4001832"
+    },
+    {
+      "path": "tests/new-student-auth.test.ts",
+      "sha256": "de842e218e1e1f3170590875159a61739078b6859028110e3d0265bfb1194905"
+    },
+    {
+      "path": "tests/auth-config.test.ts",
+      "sha256": "e8a4a89fbddb6018997ada01e2415e2564e6112145a6a854e05f4fbe5cc5da59"
+    },
+    {
+      "path": "tests/auth-routes.test.ts",
+      "sha256": "32709742f6dbd59e47058ffbe15cb043ec3645e58d9df2b65192316b4ae1ede3"
+    },
+    {
+      "path": "tests/e2e/auth.spec.ts",
+      "sha256": "baaadfdea241acf40dd8c82c2c0d85bc008fb9a47769646e0e3cd011429b4476"
+    }
+  ]
+}

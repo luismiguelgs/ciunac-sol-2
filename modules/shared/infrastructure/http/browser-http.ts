@@ -30,7 +30,7 @@ function httpError(status: number, payload: unknown): AppError {
   })
 }
 
-export async function requestJsonResult<T>(path: string, method: string, body?: unknown): Promise<AppResult<T>> {
+export async function requestJsonResult<T>(path: string, method: string, body?: unknown, timeoutMs = REQUEST_TIMEOUT_MS): Promise<AppResult<T>> {
   const multipart = body instanceof FormData
   let requestBody: BodyInit | undefined
   try {
@@ -40,7 +40,7 @@ export async function requestJsonResult<T>(path: string, method: string, body?: 
   }
 
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
   try {
     const response = await fetch(path, {
       method,
@@ -79,8 +79,8 @@ export async function requestJsonResult<T>(path: string, method: string, body?: 
   }
 }
 
-export async function requestJson<T>(path: string, method: string, body?: unknown): Promise<T> {
-  const result = await requestJsonResult<T>(path, method, body)
+export async function requestJson<T>(path: string, method: string, body?: unknown, timeoutMs?: number): Promise<T> {
+  const result = await requestJsonResult<T>(path, method, body, timeoutMs)
   if (!result.ok) throw result.error
   if (result.kind === 'empty') {
     throw new AppError({ code: 'EXTERNAL_SERVICE', message: 'El servicio no devolvio los datos esperados.' })

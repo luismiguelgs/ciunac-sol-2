@@ -4,6 +4,7 @@ import { SecurityError } from '@/modules/security/server/security-error';
 type CiunacRequestOptions = {
   method?: 'GET' | 'POST' | 'PATCH';
   body?: unknown;
+  timeoutMs?: number;
 };
 
 /** Transporte privado CIUNAC, sin cache ni reintentos; el consumidor valida la estructura del JSON. */
@@ -33,7 +34,7 @@ export async function ciunacRequest<T>(path: string, options: CiunacRequestOptio
       headers,
       body: requestBody,
       cache: 'no-store',
-      signal: AbortSignal.timeout(15_000),
+      signal: AbortSignal.timeout(options.timeoutMs ?? 15_000),
     });
   } catch {
     throw new SecurityError('SERVICE_UNAVAILABLE', 503, 'CIUNAC API is unavailable');

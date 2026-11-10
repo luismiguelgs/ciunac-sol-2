@@ -16,6 +16,9 @@ import {
   readVerifiedSessionFromRequest,
 } from '@/modules/security/server/session'
 import { SecurityError } from '@/modules/security/server/security-error'
+import { readNewStudentVerifiedSession } from '@/modules/security/server/new-student-session'
+import { registerNewStudentOnServer } from '@/modules/solicitud-nuevo/infrastructure/server/registration'
+import type { Q10StudentRequestDto } from '@/modules/solicitud-nuevo/infrastructure/q10-api.schemas'
 
 export const runtime = 'nodejs'
 
@@ -36,12 +39,18 @@ async function handle(request: NextRequest, context: RouteContext, method: Ciuna
     if (!operation) throw new SecurityError('FORBIDDEN', 403, 'API operation is not allowed')
 
     // Son permisos distintos: correo verificado para registro, consulta para documentos digitales.
-    const verified = readVerifiedSessionFromRequest(request)
+    const legacy = operation === 'new-student.create' ? null : readVerifiedSessionFromRequest(request)
+    const verified = operation === 'new-student.create'
+      ? await readNewStudentVerifiedSession()
+      : legacy?.purpose === 'NUEVO' ? null : legacy
     const consultation = readConsultationSessionFromRequest(request)
     assertCiunacProxyAccess(operation, verified, consultation)
     if (method !== 'GET') assertTrustedOrigin(request)
 
     const body = await validateCiunacProxyBody(request, method, operation, verified)
+    if (operation === 'new-student.create' && verified) {
+      return NextResponse.json(await registerNewStudentOnServer(body as Q10StudentRequestDto, verified))
+    }
     const data = await ciunacRequest<unknown>(path, { method, body })
     validateCiunacProxyResponse(operation, data, verified)
 

@@ -15,6 +15,7 @@ export default function VerificacionEmail({ priceTable }: Props) {
       <Image
         src="/images/email-verification.png"
         alt="Verificación de correo electrónico"
+        loading="eager"
         width={compact ? 140 : 190}
         height={compact ? 140 : 190}
       />

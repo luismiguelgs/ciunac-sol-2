@@ -65,6 +65,7 @@ interface StepperControlProps {
     disabledPrevious?: boolean;
     disabledNext?: boolean;
     nextLabel?: string;
+    size?: "default" | "lg";
 }
 
 export function StepperControl({
@@ -76,6 +77,7 @@ export function StepperControl({
     disabledPrevious = false,
     disabledNext = false,
     nextLabel,
+    size = "default",
 }: StepperControlProps) {
     const handleNext = () => {
         if (type === "button") {
@@ -85,12 +87,13 @@ export function StepperControl({
     }
 
     return (
-        <div className="mt-8 flex justify-between">
+        <div className={size === "lg" ? "mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between" : "mt-8 flex justify-between"}>
             <Button
                 onClick={() => setActiveStep(prev => prev - 1)}
                 disabled={activeStep === 0 || disabled || disabledPrevious}
                 variant="outline"
                 type="button"
+                className={size === "lg" ? "min-h-12 w-full rounded-xl px-6 text-base font-semibold sm:w-auto sm:min-w-36" : undefined}
             >
                 Anterior
             </Button>
@@ -98,6 +101,7 @@ export function StepperControl({
                 onClick={type === "button" ? handleNext : undefined}
                 disabled={disabled || disabledNext}
                 type={type}
+                className={size === "lg" ? "min-h-12 w-full rounded-xl px-6 text-base font-semibold sm:w-auto sm:min-w-36" : undefined}
             >
                 {nextLabel ?? (activeStep === steps.length - 1 ? "Finalizar" : "Siguiente")}
             </Button>
