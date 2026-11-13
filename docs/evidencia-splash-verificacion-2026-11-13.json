@@ -1,0 +1,86 @@
+{
+  "timezone": "America/Lima",
+  "documentationRevision": "pendiente de versionar",
+  "sources": [
+    {
+      "path": "modules/solicitud-nuevo/components/verification.tsx",
+      "sha256": "95bc5a0df6a7c9d446f5c56ff684cd7d39232ea0a4f2f20b1034779ee0fb547b"
+    },
+    {
+      "path": "modules/solicitud-nuevo/components/verification-splash.tsx",
+      "sha256": "347a4bd4ced351176d6c9b5dfbb487404c80e33082aa626d3f1931b09d1e08f6"
+    },
+    {
+      "path": "tests/e2e/auth.spec.ts",
+      "sha256": "3301c06bbefb6dd81331ac88eab71dd47cfc0dc495c7d1d56250f730e3206e63"
+    }
+  ],
+  "codeRevision": "cec3350618723e2a0b47c015b5d7346fdefd8463 plus local work",
+  "date": "2026-11-13",
+  "responsive": {
+    "hidden": [
+      390,
+      768,
+      1023
+    ],
+    "basicDataHasNoImage": true,
+    "noHorizontalOverflow": true,
+    "verifiedEmailAndOtpHaveImage": true,
+    "preservesEmailAndPartialOtpOnResize": true,
+    "visuallyInspected": [
+      "email-390.png",
+      "email-1024.png",
+      "email-1920.png",
+      "otp-desktop.png",
+      "verified-desktop.png"
+    ],
+    "screenshots": ".next-e2e/verification-splash/",
+    "visible": [
+      1024,
+      1366,
+      1920
+    ]
+  },
+  "task": "TASK-AN-018",
+  "spec": "SPEC-003",
+  "limits": [
+    "No production deployment or real external business operations",
+    "Fonts, CAPTCHA and identity providers simulated",
+    "Full E2E suite not green; existing CE/DNI test failure recorded",
+    "Existing local consultation, image and package changes preserved"
+  ],
+  "criterion": "CA-AN-036",
+  "checks": [
+    {
+      "result": "passed",
+      "command": "node node_modules/eslint/bin/eslint.js modules/solicitud-nuevo/components/verification.tsx modules/solicitud-nuevo/components/verification-splash.tsx tests/e2e/auth.spec.ts"
+    },
+    {
+      "isolation": "simulated services and fonts",
+      "result": "passed with additional execution permission after sandbox EPERM",
+      "command": "node tests/e2e/start-server.mjs --build"
+    },
+    {
+      "initialAttempt": "simultaneous build regenerated type files; rerun sequentially",
+      "result": "passed after build completed",
+      "command": "node node_modules/typescript/bin/tsc --noEmit"
+    },
+    {
+      "duration": "1.6m",
+      "failure": "Existing text-limit test remained in basic data after CE to DNI change; document had 6 digits and could not advance. No root cause claim or unrelated product change.",
+      "result": "27 passed, 1 failed",
+      "command": "node node_modules/@playwright/test/cli.js test"
+    },
+    {
+      "duration": "6.6s",
+      "result": "3 passed",
+      "command": "node node_modules/@playwright/test/cli.js test --grep 'TEST-AN-036|Google verified OAuth return and reload'"
+    },
+    {
+      "result": "passed",
+      "command": "git diff --check"
+    }
+  ],
+  "requirement": "HU-AN-003 / RF-AN-009",
+  "test": "TEST-AN-036"
+}

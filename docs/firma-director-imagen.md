@@ -1,0 +1,11 @@
+# Sello con firma: legibilidad y fondo transparente
+
+2026-11-13, America/Lima. Solicitud de edición de imagen, sin cambios de comportamiento del portal ni contratos HTTP. Herramienta: imagegen integrada; no CLI/API externa ni claves del usuario.
+
+Original conservado: `assets/firma_director.jpg`. Entrega: `assets/firma_director-transparente.png`. Restauración generativa en dos pasadas: limpieza del fondo y contraste, seguida de refuerzo de opacidad de la tinta y limpieza de bordes. Se solicitó preservar composición, texto, emblema y trazos. No se certifica equivalencia pixel a pixel con el escaneo original de baja resolución. El PDF existente no se modificó por esta entrega de recurso gráfico.
+
+Prompt final aplicado:
+
+> Target image 1 is the transparent restored stamp/signature; image 2 is the original scan, supplied only to preserve the source letter shapes and signature. Make a single targeted refinement of image 1: improve INK opacity and clarity while keeping the background genuinely transparent. The printed black stamp letters and the emblem must have solid, legible near-black ink interiors, not ghosted gray outlines or mostly transparent ink. The existing blue-gray signature must be solid dark blue-gray/navy with smooth clean anti-aliased edges, removing blue speckling/halos. Keep alpha 0 for the paper/background and spaces inside letters and between strokes, and high opacity within the genuine ink strokes, with soft antialiasing only at their edges. Preserve all text, glyph shapes, name, lines, emblem and every signature stroke and crossing exactly as in image 1, checked against the original; no new words, no guessed missing letters, no retyping or changing identity, no new signature. Do not change the layout, proportions, handwriting, stamp shape or composition. Retain the wide tight framing. Output a transparent PNG with fully readable dark ink on white when composited onto a document. No white background, no solid background, no drawn checkerboard, no shadows, no decorative additions.
+
+Inspección visual del resultado y comprobación del canal alfa mediante System.Drawing: PNG con transparencia real y tinta opaca/antialias. Se conserva el alfa generado, sin aplanar sobre un color de fondo. No se regeneró ningún documento del portal ni se desplegó.

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { readFile } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { encode } from 'next-auth/jwt'
 import { spawn } from 'node:child_process'
 import { resolve } from 'node:path'
@@ -55,6 +55,7 @@ test.describe('Google OAuth', () => {
     await page.getByRole('button', { name: 'Continuar con Google', exact: true }).click()
     await expect(page.getByText('Correo validado:', { exact: false }).first()).toBeVisible()
     await expect(page.getByLabel('Primer Apellido', { exact: true })).toBeVisible()
+    await expect(page.getByTestId('verification-splash')).toHaveCount(0)
     const session = await (await page.request.get('/api/auth/session')).json()
     expect(session.newStudent.emailVerified).toBe(true)
     expect(JSON.stringify(session)).not.toContain('test-access-token')
@@ -76,6 +77,62 @@ test.describe('Google OAuth', () => {
     const confirmed = await (await page.request.get('/api/auth/session')).json()
     expect(confirmed.newStudent).toMatchObject({ provider: 'email-otp', emailVerified: true })
   })
+})
+
+test('TEST-AN-036: verification Splash follows the desktop breakpoint without resetting email', async ({ page }) => {
+  await mkdir('.next-e2e/verification-splash', { recursive: true })
+  await page.goto('/solicitud-nuevo')
+  const email = page.locator('input[name="email"]')
+  await email.fill('splash@example.test')
+  const splash = page.getByTestId('verification-splash')
+  for (const width of [390, 768, 1023, 1024, 1366, 1920]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1080 })
+    await expect(email).toHaveValue('splash@example.test')
+    await expect(page.getByRole('button', { name: 'Continuar con Google', exact: true })).toBeVisible()
+    if (width >= 1024) {
+      await expect(splash).toBeVisible()
+      await expect.poll(() => splash.locator('img').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+      const formBox = await page.locator('form').boundingBox()
+      const imageBox = await splash.boundingBox()
+      expect(formBox!.x + formBox!.width).toBeLessThanOrEqual(imageBox!.x)
+      await expect(splash.locator('img')).toHaveCSS('object-fit', 'cover')
+      await expect(splash.locator('img')).toHaveCSS('object-position', '50% 50%')
+    } else await expect(splash).toBeHidden()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+    await page.screenshot({ path: `.next-e2e/verification-splash/email-${width}.png`, fullPage: true, animations: 'disabled' })
+  }
+})
+
+test('TEST-AN-036: Splash stays for OTP and verified email, and disappears in basic data', async ({ page }) => {
+  await mkdir('.next-e2e/verification-splash', { recursive: true })
+  await page.setViewportSize({ width: 1366, height: 1080 })
+  await page.goto('/solicitud-nuevo')
+  await page.locator('input[name="email"]').fill('test@example.test')
+  await page.getByRole('button', { name: 'CAPTCHA de prueba' }).click()
+  await page.getByRole('button', { name: 'Enviar código', exact: true }).click()
+  const code = page.locator('input[autocomplete="one-time-code"]')
+  await expect(code).toBeEnabled()
+  await expect(page.getByTestId('verification-splash')).toBeVisible()
+  await code.fill('123')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(page.getByTestId('verification-splash')).toBeHidden()
+  await expect(code).toHaveValue('123')
+  await page.setViewportSize({ width: 1366, height: 1080 })
+  await expect(code).toHaveValue('123')
+  await expect(page.getByTestId('verification-splash')).toBeVisible()
+  await page.screenshot({ path: '.next-e2e/verification-splash/otp-desktop.png', fullPage: true, animations: 'disabled' })
+  const mail = JSON.parse(await readFile('.next-e2e/test-mail.json', 'utf8'))
+  await code.fill(mail.code)
+  await page.getByRole('button', { name: 'Verificar código y continuar', exact: true }).click()
+  await expect(page.getByLabel('Primer Apellido', { exact: true })).toBeVisible()
+  await expect(page.getByTestId('verification-splash')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Anterior', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Tu correo está verificado', exact: true })).toBeVisible()
+  await expect(page.getByTestId('verification-splash')).toBeVisible()
+  await page.screenshot({ path: '.next-e2e/verification-splash/verified-desktop.png', fullPage: true, animations: 'disabled' })
+  await page.getByRole('button', { name: 'Continuar con este correo', exact: true }).click()
+  await expect(page.getByTestId('verification-splash')).toHaveCount(0)
+  await expect(page.getByLabel('Primer Apellido', { exact: true })).toBeVisible()
 })
 
 for (const mode of ['cancel', 'invalid-state'] as const) {

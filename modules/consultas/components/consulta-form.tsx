@@ -88,7 +88,7 @@ export default function ConsultaForm({ solicitud }: Props) {
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-3xl font-bold">
-            Consulta de Solicitud de {solicitud === 'EXAMEN' ? 'EXAMEN DE UBICACION' : 'CERTIFICADO'}
+            Consulta de Solicitud de {solicitud === 'EXAMEN' ? 'EXAMEN DE UBICACIÓN' : 'CERTIFICADO'}
           </h1>
           <p className="text-balance text-sm text-muted-foreground">
             Ingrese su documento de identidad para consultar el estado de su solicitud.

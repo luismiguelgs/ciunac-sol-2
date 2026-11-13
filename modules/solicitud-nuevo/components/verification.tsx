@@ -12,6 +12,7 @@ import { requestOtp, verifyOtp } from '@/modules/security/client/security-client
 import { useOtpTimers } from '@/modules/security/client/use-otp-timers'
 import { initialValues, type IVerificationSchema, verificationSchema } from '@/modules/shared/schemas/verification.schema'
 import EmailVerificationPanel from './email-verification-panel'
+import VerificationSplash from './verification-splash'
 
 type Props = {
   handleNext: () => Promise<void>
@@ -167,6 +168,7 @@ export default function Verification({ handleNext, providers }: Props) {
   </div>
 
   return (
+    <div className="grid min-w-0 grid-cols-1 lg:grid-cols-2 lg:gap-6">
     <form noValidate onSubmit={(event) => {
       event.preventDefault()
       if (codeRequested) void form.handleSubmit(onSubmit)()
@@ -193,5 +195,7 @@ export default function Verification({ handleNext, providers }: Props) {
         error={error} announcement={otpTimers.expired ? 'El código expiró. Solicita uno nuevo para continuar.' : announcement} captcha={captcha} alternatives={alternatives}
         onRequestCode={() => void requestCode()} onChangeEmail={changeEmail} />}
     </form>
+    <VerificationSplash />
+    </div>
   )
 }

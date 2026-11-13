@@ -1,6 +1,6 @@
 import { Lock } from "lucide-react"
 import Copyright from "./copyright"
-import Image from "next/image"
+import Image, { getImageProps } from "next/image"
 
 interface ConsultaPageProps {
     children: React.ReactNode
@@ -8,6 +8,13 @@ interface ConsultaPageProps {
 
 export default function ConsultaPage({ children }: ConsultaPageProps) 
 {
+    const wideImage = getImageProps({
+        src: "/images/splash-wide.jpg",
+        alt: "Estudiantes frente al Centro de Idiomas de la Universidad Nacional del Callao",
+        fill: true,
+        sizes: "(min-aspect-ratio: 8/3) 50vw, 134vh",
+    }).props
+
     return (
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -23,15 +30,19 @@ export default function ConsultaPage({ children }: ConsultaPageProps)
                     </div>
                 </div>
             </div>
-            <div className="relative hidden bg-muted lg:block">
+            <div className="relative hidden min-w-0 overflow-hidden bg-muted lg:block">
+                <picture className="absolute inset-0 block">
+                <source media="(min-aspect-ratio: 3/2)" srcSet={wideImage.srcSet} sizes={wideImage.sizes} />
                 <Image
                     src="/images/splash.jpg"
-                    alt="Image"
-                    width={1920}
-                    height={1080}
-                    priority
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    alt="Estudiantes frente al Centro de Idiomas de la Universidad Nacional del Callao"
+                    fill
+                    sizes="(min-aspect-ratio: 10/7) 50vw, 71vh"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="object-cover object-center dark:brightness-[0.2] dark:grayscale"
                 />
+                </picture>
             </div>
         </div>
     )
