@@ -1,5 +1,6 @@
 import { getCiunacConfig } from '@/modules/security/server/environment';
 import { SecurityError } from '@/modules/security/server/security-error';
+import { readNewStudentUpstreamDiagnostic } from './new-student-upstream-diagnostic';
 
 type CiunacRequestOptions = {
   method?: 'GET' | 'POST' | 'PATCH';
@@ -42,7 +43,9 @@ export async function ciunacRequest<T>(path: string, options: CiunacRequestOptio
 
   if (!response.ok) {
     const status = response.status >= 400 && response.status < 500 ? response.status : 503;
-    throw new SecurityError('UPSTREAM_ERROR', status, 'CIUNAC API rejected the request');
+    const diagnostic = method === 'POST' && normalizedPath === 'q10/estudiantes' && [400, 409, 422].includes(status)
+      ? await readNewStudentUpstreamDiagnostic(response) : undefined;
+    throw new SecurityError('UPSTREAM_ERROR', status, 'CIUNAC API rejected the request', diagnostic);
   }
 
   // Leer JSON no valida el DTO. Cuerpo ausente o JSON null resultan en null para el consumidor.

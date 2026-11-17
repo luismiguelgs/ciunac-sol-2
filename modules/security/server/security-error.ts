@@ -1,3 +1,5 @@
+import type { NewStudentUpstreamDiagnostic } from './new-student-upstream-diagnostic';
+
 export type SecurityErrorCode =
   | 'INVALID_REQUEST'
   | 'INVALID_FILE'
@@ -22,6 +24,7 @@ export class SecurityError extends Error {
     readonly code: SecurityErrorCode,
     readonly status: number,
     message: string,
+    readonly registrationDiagnostic?: NewStudentUpstreamDiagnostic,
   ) {
     super(message);
     this.name = 'SecurityError';

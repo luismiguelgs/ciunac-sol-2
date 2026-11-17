@@ -31,6 +31,13 @@ export function securityErrorResponse(event: string, correlationId: string, erro
   if (securityError.status >= 500) {
     logServerError(event, correlationId, securityError);
   }
+  if (securityError.registrationDiagnostic) {
+    console.warn(JSON.stringify({
+      event: 'security.new-student.upstream.rejected', correlationId,
+      status: securityError.status, code: securityError.code,
+      ...securityError.registrationDiagnostic,
+    }));
+  }
 
   return NextResponse.json(
     {
